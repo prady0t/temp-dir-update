@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You, My Love</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    background-image: linear-gradient(rgba(102, 126, 234, 0.7), rgba(118, 75, 162, 0.7)), url('static/images/V.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* Floating tulips background animation */
+.tulip-bg {
+    position: absolute;
+    font-size: 20px;
+    animation: float 15s infinite ease-in-out;
+    opacity: 0.15;
+    color: white;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-50px) rotate(180deg); }
+}
+
+/* Main wrapper for 3D effect */
+.scene {
+    width: 500px;
+    height: 700px;
+    position: relative;
+    perspective: 1000px;
+}
+
+/* Card container */
+.card-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(-10deg);
+}
+
+/* Card base/inside */
+.card-inside {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-inside::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(188, 143, 143, 0.2), transparent);
+}
+
+/* Card cover */
+.card-cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fbd3e9 0%, #bb377d 100%);
+    border-radius: 20px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transform-origin: top center;
+    transition: transform 1.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+    backface-visibility: hidden;
+    z-index: 2;
+}
+
+.card-cover.open {
+    transform: rotateX(-170deg);
+}
+
+.card-cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    animation: shimmer 4s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Inner flap (back of cover) - removed as not needed */
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.main-tulip {
+    font-size: 70px;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+    z-index: 1;
+    position: relative;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.card-cover h1 {
+    color: white;
+    font-size: 28px;
+    text-align: center;
+    padding: 0 30px;
+    z-index: 1;
+    position: relative;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin-bottom: 15px;
+}
+
+.click-hint {
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    font-style: italic;
+    z-index: 1;
+    position: relative;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.5; }
+}
+
+.message-container {
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 420px;
+    max-height: 85%;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.8s ease-out 1.5s forwards;
+}
+
+/* Custom scrollbar for message container */
+.message-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.message-container::-webkit-scrollbar-thumb {
+    background: rgba(118, 75, 162, 0.3);
+    border-radius: 10px;
+}
+
+.message-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(118, 75, 162, 0.5);
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-container h2 {
+    color: #764ba2;
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.message-content {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.signature {
+    margin-top: 20px;
+    text-align: right;
+    font-style: italic;
+    color: #764ba2;
+    font-size: 18px;
+}
+
+/* Decorative tulips on cover */
+.decorative-tulip {
+    position: absolute;
+    color: rgba(255,255,255,0.3);
+    font-size: 20px;
+    animation: float-tulip 6s infinite ease-in-out;
+}
+
+.decorative-tulip:nth-child(4) { top: 15%; left: 15%; animation-delay: 0s; }
+.decorative-tulip:nth-child(5) { top: 15%; right: 15%; animation-delay: 1s; }
+.decorative-tulip:nth-child(6) { bottom: 15%; left: 20%; animation-delay: 2s; }
+.decorative-tulip:nth-child(7) { bottom: 15%; right: 20%; animation-delay: 3s; }
+
+@keyframes float-tulip {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+    50% { transform: translateY(-10px) scale(1.1) rotate(5deg); }
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.close-btn.show {
+    opacity: 1;
+    transform: scale(1);
+    animation: popIn 0.5s ease-out 2s forwards;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Falling tulips animation */
+@keyframes fall {
+    to {
+        transform: translateY(calc(100vh + 50px)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes sparkle {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5) rotate(180deg) translateY(-20px);
+        opacity: 0;
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+    .scene {
+        width: 90vw;
+        max-width: 400px;
+        height: 600px;
+    }
+    
+    .card-cover h1 {
+        font-size: 22px;
+        padding: 0 20px;
+    }
+    
+    .message-container {
+        padding: 25px;
+        margin-top: 20px;
+        max-width: 90%;
+    }
+    
+    .message-content {
+        font-size: 14px;
+    }
+
+    .main-tulip {
+        font-size: 50px;
+    }
+
+    .inner-flap p {
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+<body>
+<!-- Floating background tulips -->
+<div class="tulip-bg" style="top: 10%; left: 10%;">🌷</div>
+<div class="tulip-bg" style="top: 20%; right: 20%; animation-delay: 2s;">🌷</div>
+<div class="tulip-bg" style="bottom: 30%; left: 25%; animation-delay: 4s;">🌷</div>
+<div class="tulip-bg" style="bottom: 20%; right: 10%; animation-delay: 6s;">🌷</div>
+<div class="tulip-bg" style="top: 50%; left: 5%; animation-delay: 8s;">🌷</div>
+<div class="tulip-bg" style="top: 60%; right: 15%; animation-delay: 10s;">🌷</div>
+
+<div class="scene">
+<div class="card-container">
+    <!-- Inside/Base of card -->
+    <div class="card-inside">
+        <button class="close-btn" id="closeBtn" onclick="closeCard()">✕</button>
+        <div class="message-container" id="messageContainer">
+            <h2>My Dearest V 🌷</h2>
+            <div class="message-content">
+                <p>Hello,</p>
+                <p>First of all, <strong>I LOVE YOU</strong>. Since that's out of the picture, I want to make you realise how beautiful and fun you are. You make the world brighter for me. You make me look into dimensions I would never have thought about. You have such a beautiful and sharp brain, that's really rare.</p>
+                <p>Beyond all the confusion, I will always like to be your friend, a really good one.</p>
+                <p>You are the reason I enjoy the smallest little things V, and I want to make you feel like this someday. Thanks for everything, my V.</p>
+            </div>
+            <div class="signature">With all love and respect,<br>Prady Bhaiya 🌷</div>
+        </div>
+    </div>
+
+    <!-- Cover -->
+    <div class="card-cover" id="cardCover" onclick="openCard()">
+        <div class="main-tulip">🌷</div>
+        <h1>To the coolest girl I know</h1>
+        <p style="color: white; font-size: 20px; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Shruti Varshney</p>
+        <p class="click-hint">Click to open</p>
+        <div class="decorative-tulip">🌷</div>
+        <div class="decorative-tulip">🌷</div>
+        <div class="decorative-tulip">🌷</div>
+        <div class="decorative-tulip">🌷</div>
+    </div>
+</div>
+</div>
+
+<script>
+let isOpen = false;
+
+function openCard() {
+    if (!isOpen) {
+        const cardCover = document.getElementById('cardCover');
+        const messageContainer = document.getElementById('messageContainer');
+        const closeBtn = document.getElementById('closeBtn');
+        
+        isOpen = true;
+        cardCover.classList.add('open');
+        
+        // Reset animations for message
+        messageContainer.style.animation = 'none';
+        setTimeout(() => {
+            messageContainer.style.animation = 'slideUp 0.8s ease-out forwards';
+        }, 100);
+        
+        // Show close button
+        setTimeout(() => {
+            closeBtn.classList.add('show');
+        }, 2000);
+        
+        // Create falling tulips effect
+        setTimeout(createFallingTulips, 800);
+    }
+}
+
+function closeCard() {
+    const cardCover = document.getElementById('cardCover');
+    const closeBtn = document.getElementById('closeBtn');
+    
+    isOpen = false;
+    cardCover.classList.remove('open');
+    closeBtn.classList.remove('show');
+}
+
+function createFallingTulips() {
+    for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+            const tulip = document.createElement('div');
+            tulip.innerHTML = '🌷';
+            tulip.style.position = 'fixed';
+            tulip.style.top = '-50px';
+            tulip.style.left = Math.random() * window.innerWidth + 'px';
+            tulip.style.fontSize = Math.random() * 15 + 15 + 'px';
+            tulip.style.animation = 'fall 3s linear forwards';
+            tulip.style.pointerEvents = 'none';
+            tulip.style.zIndex = '9999';
+            document.body.appendChild(tulip);
+
+            setTimeout(() => {
+                tulip.remove();
+            }, 3000);
+        }, i * 200);
+    }
+}
+
+// Add sparkle effect on mouse move
+let lastSparkle = 0;
+document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastSparkle > 100 && Math.random() > 0.95) {
+        lastSparkle = now;
+        const sparkle = document.createElement('div');
+        sparkle.innerHTML = '✨';
+        sparkle.style.position = 'fixed';
+        sparkle.style.left = e.clientX + 'px';
+        sparkle.style.top = e.clientY + 'px';
+        sparkle.style.pointerEvents = 'none';
+        sparkle.style.animation = 'sparkle 1s ease-out forwards';
+        sparkle.style.zIndex = '9999';
+        document.body.appendChild(sparkle);
+
+        setTimeout(() => sparkle.remove(), 1000);
+    }
+});
+</script>
+</body>
+</html>
